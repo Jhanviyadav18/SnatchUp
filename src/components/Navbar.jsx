@@ -9,33 +9,34 @@ const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-gray-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-blue-600">ShopHub</span>
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0">
+              <h1 className="text-xl font-bold">SnatchUp</h1>
             </Link>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                to="/"
-                className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                to="/products"
-                className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
-              >
-                Products
-              </Link>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                <Link
+                  to="/"
+                  className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/products"
+                  className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Products
+                </Link>
+              </div>
             </div>
           </div>
-
-          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+          <div className="flex items-center">
             <Link
               to="/cart"
-              className="text-gray-500 hover:text-gray-900 relative p-2 rounded-full"
+              className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium relative"
             >
               <span className="sr-only">Cart</span>
               <svg
@@ -55,64 +56,21 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-
             {isAuthenticated ? (
-              <div className="relative">
-                <button
-                  onClick={() => logout()}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-                >
-                  Logout
-                </button>
-              </div>
+              <button
+                onClick={() => logout()}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 ml-4"
+              >
+                Logout
+              </button>
             ) : (
               <Link
                 to="/login"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+                className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
               >
                 Login
               </Link>
             )}
-          </div>
-
-          <div className="-mr-2 flex items-center sm:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            >
-              <span className="sr-only">Open main menu</span>
-              {!isMenuOpen ? (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              )}
-            </button>
           </div>
         </div>
       </div>

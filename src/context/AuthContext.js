@@ -58,25 +58,18 @@ export const AuthProvider = ({ children }) => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Mock validation
-      if (email === 'test@gmail.com' && password === 'password') {
-        const mockUser = {
-          id: 1,
-          email: 'test@gmail.com',
-          firstName: 'Test',
-          lastName: 'User'
-        };
-        const mockToken = 'mock-jwt-token';
-        
-        localStorage.setItem('authToken', mockToken);
-        setUser(mockUser);
-        return { success: true };
-      }
-
-      return { 
-        success: false, 
-        error: 'Invalid email or password. Try test@gmail.com / password' 
+      // Allow any email/password for demo
+      const mockUser = {
+        id: Date.now(),
+        email,
+        firstName: email.split('@')[0],
+        lastName: '',
       };
+      const mockToken = 'mock-jwt-token-' + mockUser.id;
+      localStorage.setItem('authToken', mockToken);
+      localStorage.setItem(`user_${mockUser.id}`, JSON.stringify(mockUser));
+      setUser(mockUser);
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: 'An error occurred during login' };
