@@ -217,7 +217,7 @@ const Checkout = () => {
               value={formData.zipCode}
               onChange={handleInputChange}
               required
-              pattern="[0-9]{5}"
+              pattern="[0-9]{6}"
               className="w-full px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -236,7 +236,7 @@ const Checkout = () => {
               value={formData.cardNumber}
               onChange={handleInputChange}
               required
-              pattern="[0-9]{16}"
+              pattern="[0-9]{12}"
               className="w-full px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500"
             />
           </div>

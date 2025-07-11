@@ -4,6 +4,7 @@ import WirelessHeadphone from '../assets/product-images/WirelessHeadphone.jpeg';
 import DenimJeans from '../assets/product-images/DenimJeans.jpeg';
 import BeddingSet from '../assets/product-images/BeddingSet.jpeg';
 import SmartSpeaker from '../assets/product-images/SmartSpeaker.jpeg';
+import { Link } from 'react-router-dom';
 
 const FeaturedCarousel = () => {
   const featuredProducts = [
@@ -54,7 +55,10 @@ const FeaturedCarousel = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-10">
-      <h2 className="text-2xl font-bold mb-4 text-center">Featured Products</h2>
+      <div className="flex items-center mb-4">
+        <Link to="/products" className="mr-4 bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 font-medium">View All</Link>
+        <h2 className="text-2xl font-bold flex-1 text-center">Featured Products</h2>
+      </div>
       <Slider {...settings}>
         {featuredProducts.map(product => (
           <div key={product.id} className="p-4">
@@ -63,6 +67,7 @@ const FeaturedCarousel = () => {
               <h3 className="text-lg font-semibold">{product.name}</h3>
               <p className="text-gray-600">{product.description}</p>
               <p className="text-blue-600 font-bold mt-2">${product.price}</p>
+              <Link to={`/product/${product.id}`} className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">View Product</Link>
             </div>
           </div>
         ))}

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'; // ✅ Add this
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
 
   const calculateTotal = () => {
@@ -41,7 +41,15 @@ const Cart = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold">Shopping Cart</h1>
+        <button
+          onClick={clearCart}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium"
+        >
+          Remove All
+        </button>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Cart Items */}

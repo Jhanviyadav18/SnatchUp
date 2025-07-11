@@ -15,10 +15,20 @@ import BeddingSet from '../assets/product-images/BeddingSet.jpeg';
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, cart, updateQuantity, getCartItemsCount } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
+  const cartItem = cart.find(item => item.id === (product ? product.id : null));
+  const [quantity, setQuantity] = useState(cartItem ? cartItem.quantity : 1);
+
+  // Sync quantity with cart when product or cart changes
+  useEffect(() => {
+    if (cartItem) {
+      setQuantity(cartItem.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [cartItem, product]);
 
   // Mock products data (same as in Products.js)
   const mockProducts = [
@@ -115,9 +125,12 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      // Add the product with the specified quantity
-      for (let i = 0; i < quantity; i++) {
-        addToCart(product);
+      if (cartItem) {
+        updateQuantity(product.id, quantity);
+      } else {
+        for (let i = 0; i < quantity; i++) {
+          addToCart(product);
+        }
       }
     }
   };
@@ -150,14 +163,16 @@ const ProductDetail = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="space-y-4">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full h-96 object-cover rounded-lg shadow-lg"
-            onError={(e) => {
-              e.target.src = '/placeholder-product.png';
-            }}
-          />
+          <div className="w-full h-[28rem] flex items-center justify-center bg-white rounded-lg shadow-lg">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="max-h-full max-w-full object-contain"
+              onError={(e) => {
+                e.target.src = '/placeholder-product.png';
+              }}
+            />
+          </div>
         </div>
 
         {/* Product Details */}
@@ -180,21 +195,35 @@ const ProductDetail = () => {
               <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
                 Quantity
               </label>
-              <select
-                id="quantity"
-                value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
-                className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                  <option key={num} value={num}>{num}</option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (quantity > 1) {
+                      setQuantity(quantity - 1);
+                      if (cartItem) updateQuantity(product.id, quantity - 1);
+                    }
+                  }}
+                  className="bg-gray-200 text-gray-800 px-3 py-1 rounded hover:bg-gray-300 text-lg"
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+                <span className="px-4 text-lg">{quantity}</span>
+                <button
+                  onClick={() => {
+                    setQuantity(quantity + 1);
+                    if (cartItem) updateQuantity(product.id, quantity + 1);
+                  }}
+                  className="bg-gray-200 text-gray-800 px-3 py-1 rounded hover:bg-gray-300 text-lg"
+                >
+                  +
+                </button>
+              </div>
             </div>
 
             <button
               onClick={handleAddToCart}
-              className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-medium text-lg"
+              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium text-base"
             >
               Add to Cart - ${(product.price * quantity).toFixed(2)}
             </button>
@@ -208,6 +237,18 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+      {/* Floating View Cart Button */}
+      {getCartItemsCount() > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 pointer-events-none">
+          <button
+            onClick={() => navigate('/cart')}
+            className="pointer-events-auto bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 text-lg font-medium flex items-center gap-2"
+          >
+            View Cart
+            <span className="bg-white text-blue-600 rounded-full px-3 py-1 ml-2 text-base font-bold">{getCartItemsCount()}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductList from '../components/ProductList';
+import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 // Please add your product images to 'src/assets/product-images/' and update the filenames below as needed
 import TV from '../assets/product-images/TV.jpeg';
@@ -24,6 +26,9 @@ const Products = () => {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
+
+  const { getCartItemsCount } = useCart();
+  const navigate = useNavigate();
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -277,6 +282,15 @@ const Products = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="fixed bottom-6 right-6 z-50 pointer-events-none">
+        <button
+          onClick={() => navigate('/cart')}
+          className="pointer-events-auto bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 text-lg font-medium flex items-center gap-2"
+        >
+          View Cart
+          <span className="bg-white text-blue-600 rounded-full px-3 py-1 ml-2 text-base font-bold">{getCartItemsCount()}</span>
+        </button>
       </div>
     </div>
   );

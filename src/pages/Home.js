@@ -24,7 +24,7 @@ const Home = () => {
     try {
       const mockFeaturedProducts = [
         {
-          id: 11,
+          id: 2,
           name: 'Wireless Headphones',
           price: 149.99,
           category: 'electronics',
@@ -32,7 +32,7 @@ const Home = () => {
           description: 'Noise-cancelling Bluetooth headphones with 30-hour battery life',
         },
         {
-          id: 22,
+          id: 4,
           name: 'Premium Denim Jeans',
           price: 89.99,
           category: 'fashion',
@@ -40,7 +40,7 @@ const Home = () => {
           description: 'High-waisted slim-fit jeans with stretch comfort',
         },
         {
-          id: 33,
+          id: 8,
           name: 'Bedding Set',
           price: 129.99,
           category: 'home & living',
@@ -48,7 +48,7 @@ const Home = () => {
           description: '100% cotton 400 thread count bedding set with duvet cover',
         },
         {
-          id: 44,
+          id: 6,
           name: 'Smart Speaker',
           price: 79.99,
           category: 'electronics',
@@ -125,7 +125,15 @@ const Home = () => {
 
       {/* Featured Products Carousel */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Products</h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
+          <Link
+            to="/products"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium"
+          >
+            View All Products
+          </Link>
+        </div>
         <Slider {...settings}>
           {featuredProducts.map((product) => (
             <div key={product.id} className="px-3">
@@ -139,7 +147,7 @@ const Home = () => {
                 <p className="text-gray-600">{product.description}</p>
                 <p className="text-blue-600 font-bold mt-2">${product.price}</p>
                 <Link
-                  to="/products"
+                  to={`/products/${product.id}`}
                   className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   View Product
