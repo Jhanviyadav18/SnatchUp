@@ -56,22 +56,14 @@ const ProductCard = ({ product }) => {
               </div>
             </div>
           ) : (
-            (name === 'Smart Speaker' || name === 'Premium Denim Jeans') ? (
-              <button
-                onClick={() => addToCart(product)}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm w-28 flex flex-col items-center justify-center"
-              >
-                <span>Add to</span>
-                <span>Cart</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => addToCart(product)}
-                className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 text-sm"
-              >
-                Add to Cart
-              </button>
-            )
+            <button
+              onClick={() => addToCart(product)}
+              className="bg-blue-600 text-white rounded hover:bg-blue-700 text-sm flex flex-col items-center justify-center"
+              style={{ width: '6rem', height: '2.7rem' }}
+            >
+              <span>Add to</span>
+              <span>Cart</span>
+            </button>
           )}
         </div>
       </div>

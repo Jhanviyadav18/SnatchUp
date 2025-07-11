@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -301,6 +301,13 @@ const Checkout = () => {
           >
             {loading ? 'Processing...' : 'Place Order'}
           </button>
+          <Link
+            to="/cart"
+            className="mt-4 w-full block text-center text-sm text-blue-600 font-normal transition-colors hover:text-blue-800 focus:outline-none"
+            style={{ textShadow: '0 1px 4px rgba(0,0,0,0.10)' }}
+          >
+            Back to Cart
+          </Link>
         </div>
       </form>
     </div>
