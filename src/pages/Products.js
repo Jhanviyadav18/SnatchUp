@@ -167,58 +167,64 @@ const Products = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Search and Filter Toggle */}
-      <div className="mb-8">
-        <form onSubmit={handleSearchSubmit} className="flex gap-4 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4">
           <div className="flex-1">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
             />
           </div>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Search
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowFilters(!showFilters)}
-            className="px-4 py-2 border rounded-lg hover:bg-gray-50 md:hidden"
-          >
-            Filters
-          </button>
+          <div className="flex gap-2 sm:gap-4">
+            <button
+              type="submit"
+              className="flex-1 sm:flex-none px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-base font-medium"
+            >
+              Search
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-4 py-3 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 md:hidden text-base font-medium"
+            >
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </button>
+          </div>
         </form>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Filters Sidebar */}
-        <div className={`w-full md:w-64 space-y-6 ${showFilters ? 'block' : 'hidden md:block'}`}>
-          <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        <div className={`w-full lg:w-64 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-6">
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Filters</h3>
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Clear all
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Categories</h4>
+                  <h4 className="font-medium mb-3">Categories</h4>
                   <div className="space-y-2">
                     {['All', 'Electronics', 'Fashion', 'Home & Living'].map((category) => (
                       <button
                         key={category}
                         onClick={() => handleCategoryChange(category === 'All' ? '' : category.toLowerCase())}
-                        className={`block w-full text-left px-4 py-2 rounded-lg ${selectedCategory === (category === 'All' ? '' : category.toLowerCase()) ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'}`}
+                        className={`block w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                          selectedCategory === (category === 'All' ? '' : category.toLowerCase()) 
+                            ? 'bg-blue-600 text-white' 
+                            : 'hover:bg-gray-100'
+                        }`}
                       >
                         {category}
                       </button>
@@ -227,21 +233,21 @@ const Products = () => {
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Price Range</h4>
-                  <div className="space-y-2">
+                  <h4 className="font-medium mb-3">Price Range</h4>
+                  <div className="space-y-3">
                     <input
                       type="number"
                       placeholder="Min Price"
                       value={priceRange.min}
                       onChange={(e) => handlePriceRangeChange(e, 'min')}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                     />
                     <input
                       type="number"
                       placeholder="Max Price"
                       value={priceRange.max}
                       onChange={(e) => handlePriceRangeChange(e, 'max')}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                     />
                   </div>
                 </div>
@@ -253,9 +259,9 @@ const Products = () => {
         {/* Products Section */}
         <div className="flex-1">
           <div className="bg-white rounded-lg shadow">
-            <div className="p-6 border-b">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">
+            <div className="p-4 sm:p-6 border-b">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold">
                   {selectedCategory 
                     ? selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1) 
                     : 'All Products'}
@@ -263,7 +269,7 @@ const Products = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full sm:w-auto px-4 py-3 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                 >
                   <option value="newest">Newest</option>
                   <option value="price_asc">Price: Low to High</option>
@@ -273,7 +279,7 @@ const Products = () => {
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <ProductList
                 products={products}
                 loading={loading}
@@ -283,13 +289,18 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <div className="fixed bottom-6 right-6 z-50 pointer-events-none">
+      
+      {/* Floating Cart Button - Mobile Optimized */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 pointer-events-none">
         <button
           onClick={() => navigate('/cart')}
-          className="pointer-events-auto bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 text-lg font-medium flex items-center gap-2"
+          className="pointer-events-auto bg-blue-600 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-blue-700 text-base sm:text-lg font-medium flex items-center gap-2"
         >
-          View Cart
-          <span className="bg-white text-blue-600 rounded-full px-3 py-1 ml-2 text-base font-bold">{getCartItemsCount()}</span>
+          <span className="hidden sm:inline">View Cart</span>
+          <span className="sm:hidden">Cart</span>
+          <span className="bg-white text-blue-600 rounded-full px-2 py-1 sm:px-3 sm:py-1 text-sm sm:text-base font-bold">
+            {getCartItemsCount()}
+          </span>
         </button>
       </div>
     </div>

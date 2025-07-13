@@ -70,13 +70,13 @@ const Cart = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 text-center">
         <div className="max-w-md mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">Looks like you haven't added any items to your cart yet.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
+          <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">Looks like you haven't added any items to your cart yet.</p>
           <button
             onClick={() => navigate('/products')}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            className="inline-flex items-center px-4 sm:px-6 py-3 border border-transparent text-sm sm:text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
             Continue Shopping
           </button>
@@ -86,65 +86,71 @@ const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Shopping Cart</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Shopping Cart</h1>
         <button
           onClick={handleClearCart}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium transition-colors"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium transition-colors text-sm sm:text-base"
         >
           Remove All
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Cart Items */}
         <div className="flex-1">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <ul className="divide-y divide-gray-200">
               {cart.map((item) => (
-                <li key={item.id} className="p-6">
-                  <div className="flex items-center">
+                <li key={item.id} className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <img
                       src={item.imageUrl}
                       alt={item.name}
-                      className="w-20 h-20 object-cover rounded"
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded flex-shrink-0"
                     />
-                    <div className="ml-6 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">
                           {item.name}
                         </h3>
-                        <p className="text-lg font-medium text-gray-900">
+                        <p className="text-base sm:text-lg font-medium text-gray-900">
                           ${(item.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                       <p className="mt-1 text-sm text-gray-500">
                         ${item.price.toFixed(2)} each
                       </p>
-                      <div className="mt-4 flex items-center">
-                        <button
-                          onClick={() => handleQuantityUpdate(item, item.quantity - 1)}
-                          className="text-gray-500 hover:text-gray-700 transition-colors"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          min="1"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityUpdate(item, parseInt(e.target.value) || 1)}
-                          className="mx-2 w-16 text-center border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <button
-                          onClick={() => handleQuantityUpdate(item, item.quantity + 1)}
-                          className="text-gray-500 hover:text-gray-700 transition-colors"
-                        >
-                          +
-                        </button>
+                      <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => handleQuantityUpdate(item, item.quantity - 1)}
+                            className="text-gray-500 hover:text-gray-700 transition-colors p-1"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                            </svg>
+                          </button>
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => handleQuantityUpdate(item, parseInt(e.target.value) || 1)}
+                            className="mx-2 w-12 sm:w-16 text-center border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          />
+                          <button
+                            onClick={() => handleQuantityUpdate(item, item.quantity + 1)}
+                            className="text-gray-500 hover:text-gray-700 transition-colors p-1"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                        </div>
                         <button
                           onClick={() => handleRemoveItem(item)}
-                          className="ml-4 text-red-600 hover:text-red-800 transition-colors"
+                          className="text-red-600 hover:text-red-800 transition-colors text-sm font-medium"
                         >
                           Remove
                         </button>
@@ -159,42 +165,42 @@ const Cart = () => {
 
         {/* Order Summary */}
         <div className="w-full lg:w-96">
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
             
             {/* Coupon Section */}
             <div className="mb-4">
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Enter coupon code"
-                  className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 />
                 <button
                   onClick={handleApplyCoupon}
                   disabled={!couponCode.trim()}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
                 >
                   Apply
                 </button>
               </div>
               {appliedCoupon && (
                 <div className="mt-2 flex items-center justify-between bg-green-50 p-2 rounded">
-                  <span className="text-sm text-green-800">
+                  <span className="text-xs sm:text-sm text-green-800 truncate">
                     {appliedCoupon.code} - {appliedCoupon.description}
                   </span>
                   <button
                     onClick={handleRemoveCoupon}
-                    className="text-red-600 hover:text-red-800 text-sm"
+                    className="text-red-600 hover:text-red-800 text-xs sm:text-sm ml-2 flex-shrink-0"
                   >
                     Remove
                   </button>
                 </div>
               )}
               {couponError && (
-                <p className="mt-1 text-sm text-red-600">{couponError}</p>
+                <p className="mt-1 text-xs sm:text-sm text-red-600">{couponError}</p>
               )}
             </div>
 
@@ -224,13 +230,13 @@ const Cart = () => {
             </div>
             <button
               onClick={handleCheckout}
-              className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
             >
               Proceed to Checkout
             </button>
             <Link
               to="/products"
-              className="mt-4 block text-center text-sm text-blue-600 hover:text-blue-800"
+              className="mt-4 block text-center text-xs sm:text-sm text-blue-600 hover:text-blue-800"
             >
               Continue Shopping
             </Link>
