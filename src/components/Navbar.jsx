@@ -16,7 +16,8 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Desktop Navigation */}
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0">
+            <Link to="/" className="flex-shrink-0 flex items-center gap-2">
+              <img src={process.env.PUBLIC_URL + '/favicon.ico'} alt="Logo" className="h-8 w-8 rounded-full object-cover" />
               <h1 className="text-xl font-bold">SnatchUp</h1>
             </Link>
             {/* Desktop Navigation - Hidden on mobile */}
