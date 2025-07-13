@@ -166,7 +166,7 @@ const Home = () => {
             {['Electronics', 'Fashion', 'Home & Living'].map((category) => (
               <Link
                 key={category}
-                to={`/products?category=${category.toLowerCase()}`}
+                to={`/products?category=${encodeURIComponent(category.toLowerCase())}`}
                 className="group relative rounded-lg overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow"
               >
                 <div className="aspect-w-16 aspect-h-9 bg-gray-200"></div>

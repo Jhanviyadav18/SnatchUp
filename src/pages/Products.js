@@ -21,7 +21,10 @@ const Products = () => {
   const [error, setError] = useState(null);
 
   // Filter and sort states
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    const categoryParam = searchParams.get('category');
+    return categoryParam ? decodeURIComponent(categoryParam) : '';
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [sortBy, setSortBy] = useState('newest');
@@ -106,7 +109,20 @@ const Products = () => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       let filteredProducts = mockProducts.filter(product => {
-        if (selectedCategory && product.category !== selectedCategory) return false;
+        // Handle category filtering with better matching
+        if (selectedCategory) {
+          // Normalize category names for comparison
+          const productCategory = product.category.toLowerCase().trim();
+          const selectedCategoryNormalized = selectedCategory.toLowerCase().trim();
+          
+          // Handle special cases like "home & living" vs "home and living"
+          if (selectedCategoryNormalized === 'home & living' || selectedCategoryNormalized === 'home and living') {
+            if (productCategory !== 'home & living') return false;
+          } else if (productCategory !== selectedCategoryNormalized) {
+            return false;
+          }
+        }
+        
         if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         if (priceRange.min && product.price < parseFloat(priceRange.min)) return false;
         if (priceRange.max && product.price > parseFloat(priceRange.max)) return false;
@@ -142,7 +158,7 @@ const Products = () => {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setSearchParams({ category });
+    setSearchParams({ category: encodeURIComponent(category) });
     setShowFilters(false);
   };
 
