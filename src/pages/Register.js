@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,6 +32,7 @@ const Register = () => {
     // Validate password match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      showError('Passwords do not match');
       return;
     }
 
@@ -44,12 +47,15 @@ const Register = () => {
       });
 
       if (result.success) {
+        showSuccess('Account created successfully! Welcome to SnatchUp!');
         navigate('/');
       } else {
         setError(result.error || 'Failed to create account');
+        showError(result.error || 'Failed to create account');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
+      showError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

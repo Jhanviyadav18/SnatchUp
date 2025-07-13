@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import { useToast } from '../context/ToastContext';
 
 // Import product images
 import TV from '../assets/product-images/TV.jpeg';
@@ -16,10 +18,13 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, cart, updateQuantity, getCartItemsCount } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { showSuccess } = useToast();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const cartItem = cart.find(item => item.id === (product ? product.id : null));
   const [quantity, setQuantity] = useState(cartItem ? cartItem.quantity : 1);
+  const isWishlisted = product ? isInWishlist(product.id) : false;
 
   // Sync quantity with cart when product or cart changes
   useEffect(() => {
@@ -127,12 +132,31 @@ const ProductDetail = () => {
     if (product) {
       if (cartItem) {
         updateQuantity(product.id, quantity);
+        showSuccess(`Quantity updated to ${quantity}`);
       } else {
         for (let i = 0; i < quantity; i++) {
           addToCart(product);
         }
+        showSuccess(`${product.name} added to cart!`);
       }
     }
+  };
+
+  const handleWishlistToggle = () => {
+    if (product) {
+      if (isWishlisted) {
+        removeFromWishlist(product.id);
+        showSuccess(`${product.name} removed from wishlist`);
+      } else {
+        addToWishlist(product);
+        showSuccess(`${product.name} added to wishlist`);
+      }
+    }
+  };
+
+  const handleBuyNow = () => {
+    handleAddToCart();
+    navigate('/checkout');
   };
 
   if (loading) {
@@ -163,15 +187,28 @@ const ProductDetail = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="space-y-4">
-          <div className="w-full h-[28rem] flex items-center justify-center bg-white rounded-lg shadow-lg">
+          <div className="relative w-full h-[28rem] flex items-center justify-center bg-white rounded-lg shadow-lg group">
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="max-h-full max-w-full object-contain"
+              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
               onError={(e) => {
                 e.target.src = '/placeholder-product.png';
               }}
             />
+            <button
+              onClick={handleWishlistToggle}
+              className={`absolute top-4 right-4 p-3 rounded-full transition-all duration-200 ${
+                isWishlisted 
+                  ? 'bg-red-500 text-white hover:bg-red-600' 
+                  : 'bg-white text-gray-400 hover:text-red-500 hover:bg-white'
+              } shadow-lg`}
+              title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            >
+              <svg className="w-6 h-6" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -221,12 +258,20 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium text-base"
-            >
-              Add to Cart - ${(product.price * quantity).toFixed(2)}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddToCart}
+                className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium text-base"
+              >
+                Add to Cart - ${(product.price * quantity).toFixed(2)}
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="flex-1 bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition-colors font-medium text-base"
+              >
+                Buy Now
+              </button>
+            </div>
 
             <button
               onClick={() => navigate('/products')}

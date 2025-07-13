@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -28,12 +30,15 @@ const Login = () => {
     try {
       const result = await login(formData.email, formData.password);
       if (result.success) {
+        showSuccess('Login successful! Welcome back!');
         navigate('/');
       } else {
         setError(result.error || 'Failed to login. Please check your credentials.');
+        showError(result.error || 'Failed to login. Please check your credentials.');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
+      showError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

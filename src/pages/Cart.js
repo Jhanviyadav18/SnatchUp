@@ -1,25 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom'; // ✅ Add this
+import { useToast } from '../context/ToastContext';
+import { useCoupon } from '../context/CouponContext';
+import { Link } from 'react-router-dom';
 
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
   const { isAuthenticated } = useAuth();
+  const { showSuccess, showWarning } = useToast();
+  const { 
+    appliedCoupon, 
+    couponError, 
+    applyCoupon, 
+    removeCoupon, 
+    calculateDiscount, 
+    getFinalTotal 
+  } = useCoupon();
+  const [couponCode, setCouponCode] = useState('');
 
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = getCartTotal();
+  const discount = calculateDiscount(subtotal);
+  const finalTotal = getFinalTotal(subtotal);
+
+  const handleApplyCoupon = () => {
+    if (applyCoupon(couponCode, subtotal)) {
+      showSuccess(`Coupon ${couponCode.toUpperCase()} applied successfully!`);
+      setCouponCode('');
+    } else {
+      showWarning(couponError);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    showSuccess('Coupon removed successfully');
   };
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
+      showWarning('Please login to proceed to checkout');
       navigate('/login', { state: { from: '/cart' } });
       return;
     }
     navigate('/checkout');
+  };
+
+  const handleRemoveItem = (item) => {
+    removeFromCart(item.id);
+    showSuccess(`${item.name} removed from cart`);
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    showSuccess('Cart cleared successfully');
+  };
+
+  const handleQuantityUpdate = (item, newQuantity) => {
+    if (newQuantity < 1) {
+      showWarning('Quantity cannot be less than 1');
+      return;
+    }
+    updateQuantity(item.id, newQuantity);
+    showSuccess(`Quantity updated to ${newQuantity}`);
   };
 
   if (cart.length === 0) {
@@ -44,8 +90,8 @@ const Cart = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <button
-          onClick={clearCart}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium"
+          onClick={handleClearCart}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium transition-colors"
         >
           Remove All
         </button>
@@ -78,8 +124,8 @@ const Cart = () => {
                       </p>
                       <div className="mt-4 flex items-center">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="text-gray-500 hover:text-gray-700"
+                          onClick={() => handleQuantityUpdate(item, item.quantity - 1)}
+                          className="text-gray-500 hover:text-gray-700 transition-colors"
                         >
                           -
                         </button>
@@ -87,18 +133,18 @@ const Cart = () => {
                           type="number"
                           min="1"
                           value={item.quantity}
-                          onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
-                          className="mx-2 w-16 text-center border rounded"
+                          onChange={(e) => handleQuantityUpdate(item, parseInt(e.target.value) || 1)}
+                          className="mx-2 w-16 text-center border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="text-gray-500 hover:text-gray-700"
+                          onClick={() => handleQuantityUpdate(item, item.quantity + 1)}
+                          className="text-gray-500 hover:text-gray-700 transition-colors"
                         >
                           +
                         </button>
                         <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="ml-4 text-red-600 hover:text-red-800"
+                          onClick={() => handleRemoveItem(item)}
+                          className="ml-4 text-red-600 hover:text-red-800 transition-colors"
                         >
                           Remove
                         </button>
@@ -115,18 +161,63 @@ const Cart = () => {
         <div className="w-full lg:w-96">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+            
+            {/* Coupon Section */}
+            <div className="mb-4">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  placeholder="Enter coupon code"
+                  className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  disabled={!couponCode.trim()}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+              {appliedCoupon && (
+                <div className="mt-2 flex items-center justify-between bg-green-50 p-2 rounded">
+                  <span className="text-sm text-green-800">
+                    {appliedCoupon.code} - {appliedCoupon.description}
+                  </span>
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className="text-red-600 hover:text-red-800 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+              {couponError && (
+                <p className="mt-1 text-sm text-red-600">{couponError}</p>
+              )}
+            </div>
+
             <div className="flow-root">
               <dl className="-my-4 text-sm">
                 <div className="py-4 flex items-center justify-between">
                   <dt className="text-gray-600">Subtotal</dt>
                   <dd className="font-medium text-gray-900">
-                    ${calculateTotal().toFixed(2)}
+                    ${subtotal.toFixed(2)}
                   </dd>
                 </div>
+                {discount > 0 && (
+                  <div className="py-2 flex items-center justify-between">
+                    <dt className="text-green-600">Discount</dt>
+                    <dd className="font-medium text-green-600">
+                      -${discount.toFixed(2)}
+                    </dd>
+                  </div>
+                )}
                 <div className="py-4 flex items-center justify-between border-t border-gray-200">
                   <dt className="text-base font-medium text-gray-900">Total</dt>
                   <dd className="text-base font-medium text-gray-900">
-                    ${calculateTotal().toFixed(2)}
+                    ${finalTotal.toFixed(2)}
                   </dd>
                 </div>
               </dl>

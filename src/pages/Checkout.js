@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useOrder } from '../context/OrderContext';
+import { useToast } from '../context/ToastContext';
+import { useCoupon } from '../context/CouponContext';
 
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
+  const { createOrder } = useOrder();
+  const { showSuccess, showError } = useToast();
+  const { appliedCoupon, calculateDiscount, getFinalTotal } = useCoupon();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -46,62 +52,43 @@ const Checkout = () => {
     setError(null);
 
     try {
-      // Create payment intent
-      const paymentResponse = await fetch('/api/payments/create-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      // Mock payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const subtotal = getCartTotal();
+      const discount = calculateDiscount(subtotal);
+      const finalTotal = getFinalTotal(subtotal);
+
+      // Create order using our context
+      const orderData = {
+        items: cart,
+        subtotal: subtotal,
+        discount: discount,
+        total: finalTotal,
+        appliedCoupon: appliedCoupon,
+        shippingAddress: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          street: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          country: 'USA'
         },
-        body: JSON.stringify({
-          amount: getCartTotal() * 100, // Convert to cents
-          currency: 'usd'
-        })
-      });
+        paymentMethod: 'Credit Card',
+        paymentStatus: 'Paid'
+      };
 
-      if (!paymentResponse.ok) {
-        throw new Error('Payment initialization failed');
-      }
+      const newOrder = createOrder(orderData);
 
-      const { clientSecret } = await paymentResponse.json();
-
-      // Create order
-      const orderResponse = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-        },
-        body: JSON.stringify({
-          items: cart.map(item => ({
-            productId: item.id,
-            quantity: item.quantity,
-            price: item.price
-          })),
-          shippingAddress: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            address: formData.address,
-            city: formData.city,
-            state: formData.state,
-            zipCode: formData.zipCode
-          },
-          paymentIntentId: clientSecret.split('_secret_')[0]
-        })
-      });
-
-      if (!orderResponse.ok) {
-        throw new Error('Order creation failed');
-      }
-
-      const orderData = await orderResponse.json();
-
-      // Clear cart and redirect to success page
+      // Clear cart and show success message
       clearCart();
-      navigate('/checkout/success', { state: { orderId: orderData.id } });
+      showSuccess('Order placed successfully!');
+      navigate('/checkout/success', { state: { orderId: newOrder.id } });
 
     } catch (err) {
       setError(err.message);
+      showError('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
