@@ -137,7 +137,7 @@ const Home = () => {
         <Slider {...settings}>
           {featuredProducts.map((product) => (
             <div key={product.id} className="px-2 sm:px-3">
-              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 text-center h-full">
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 text-center h-full transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
