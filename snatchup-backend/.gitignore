@@ -1,5 +1,5 @@
 # Maven build output
-/target/
+target/
 *.class
 
 # IDE config
@@ -11,4 +11,4 @@
 .DS_Store
 
 # Environment files
-.env 
+.env
